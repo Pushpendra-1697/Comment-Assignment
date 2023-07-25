@@ -9,7 +9,7 @@ function App() {
   const [filterTitle, setFilterTitle] = useState('');
 
 
-  console.log(data);
+  // console.log(data);
 
   const handleClick = () => {
     let payload = { id: Math.random() + comment, comment, Upvotes: 0, Downvotes: 0, replyArr: [] };
@@ -70,6 +70,17 @@ function App() {
     console.log(filteredData);
   };
 
+  const handleParticularDelete = (id) => {
+    data.splice(id, 1);
+    localStorage.setItem('data', JSON.stringify(data));
+    window.location.reload();
+  };
+
+  const handleClearAll = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
+
 
   return (
     <div className="App">
@@ -95,28 +106,32 @@ function App() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '5%' }}>
           {data && data.map((ele) =>
             <div key={ele.id} style={{ border: '1px solid black', borderRadius: '5%', padding: '10px' }}>
+              <h1>{ele.comment}</h1>
+              <button onClick={() => handleUpvote(ele.id)}>Upvotes: {ele.Upvotes}</button>
+              <button onClick={() => handleDownvotes(ele.id)}>Downvotes: {ele.Downvotes}</button>
+              <h1>Final Score: {ele.Upvotes + ele.Downvotes}</h1>
               <div>
-                <h1>{ele.comment}</h1>
-                <button onClick={() => handleUpvote(ele.id)}>Upvotes: {ele.Upvotes}</button>
-                <button onClick={() => handleDownvotes(ele.id)}>Downvotes: {ele.Downvotes}</button>
-                <h1>Final Score: {ele.Upvotes + ele.Downvotes}</h1>
+                <input placeholder='Reply Desc' onChange={(e) => setReply(e.target.value)} />
+                <button onClick={() => handleReply(ele.id)}>Reply</button>
                 <div>
-                  <input placeholder='Reply Desc' onChange={(e) => setReply(e.target.value)} />
-                  <button onClick={() => handleReply(ele.id)}>Reply</button>
-                  <div>
-                    {ele.replyArr && ele.replyArr.map(({ reply }, i) =>
-                      <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                        <p key={i}>{reply}</p>
-                        <p onClick={handleNestedReply} style={{ border: '1px solid black', borderRadius: '5px', padding: '2px' }}>Reply</p>
-                      </div>
-                    )}
-                  </div>
+                  {ele.replyArr && ele.replyArr.map(({ reply }, i) =>
+                    <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                      <p key={i}>{reply}</p>
+                      <p onClick={handleNestedReply} style={{ border: '1px solid black', borderRadius: '5px', padding: '2px' }}>Reply</p>
+                    </div>
+                  )}
                 </div>
               </div>
+              <button onClick={() => handleParticularDelete(ele.id)}>Delete</button>
             </div>
+
           )}
         </div>
       }
+
+
+      <hr />
+      <button style={{ fontSize: '20px', padding: '10px', borderRadius: '2px', color: 'red' }} onClick={handleClearAll}>Clear All</button>
 
     </div>
   );
